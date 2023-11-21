@@ -27,15 +27,25 @@ const DetailForm = () => {
   const likeUpdate = () => {
     axios.post(`http://localhost:8090/boardlike`);
   };
-  const likeBoard = (e) => {
-    if (heart) {
-      //true면(눌러져있으면)
-      // setBoard({...board},[likecount]:board.likecount-1);
-      setHeart(false);
-    } else {
-      // setBoard({...board},[likecount]:board.likecount+1);
-      setHeart(true);
-    }
+  const selectBoard = (e) => {
+
+    axios.get(`http://localhost:8090/boardlike/${num}`)
+    .then(res => {
+      console.log(res.data);
+      setBoard({...board,likecount:res.data.likeCount});
+      setHeart(res.data.isSelect)
+    })
+    .catch(err =>{
+      console.log(err.response.data);
+    })
+    // if (heart) {
+    //   //true면(눌러져있으면)
+    //   // setBoard({...board},[likecount]:board.likecount-1);
+    //   setHeart(false);
+    // } else {
+    //   // setBoard({...board},[likecount]:board.likecount+1);
+    //   setHeart(true);
+    // }
   };
   useEffect(() => {
     axios
@@ -47,6 +57,7 @@ const DetailForm = () => {
         let fileurl = res.data.board.fileurl;
         let filenums = fileurl.split(",");
         setImages([...filenums]);
+        setHeart(res.data.heart);
       })
       .catch((err) => {
         console.log(err);
@@ -166,7 +177,7 @@ const DetailForm = () => {
                   alt=""
                   width={"30px"}
                   height={"30px"}
-                  onClick={likeBoard}
+                  onClick={selectBoard}
                 />
                 &nbsp;<span>{board.likecount}</span>
                 &nbsp;
